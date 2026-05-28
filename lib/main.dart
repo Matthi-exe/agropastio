@@ -2,6 +2,34 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+const Map<String, List<String>> _protocolesSante = {
+  "Mosaïque du Manioc": [
+    "Isoler immédiatement et brûler les résidus de plants infectés.",
+    "Sélectionner exclusivement des boutures saines pour le prochain cycle.",
+    "Pratiquer une rotation stricte avec des légumineuses (Niébé) pour régénérer le sol.",
+  ],
+  "Rouille du Maïs": [
+    "Éliminer les feuilles inférieures présentant des pustules orangées.",
+    "Pulvériser une solution de bicarbonate de soude diluée (5g/L) ou décoction de Neem.",
+    "Pratiquer une rotation de culture au prochain cycle.",
+  ],
+  "Saine (Aucune anomalie)": [
+    "Contrôler régulièrement l'état foliaire.",
+    "Maintenir les bonnes pratiques d'irrigation.",
+    "Conserver un couvert végétal protecteur pour le sol.",
+  ],
+};
+
+const List<String> _defaultProtocolActions = [
+  "Isoler immédiatement la zone affectée de la parcelle.",
+  "Appliquer un traitement biologique préventif à base d'extraits végétaux locaux.",
+  "Surveiller l'évolution des symptômes sous 48h.",
+];
+
+List<String> _getProtocolActions(String detectedDisease) {
+  return _protocolesSante[detectedDisease] ?? _defaultProtocolActions;
+}
+
 void main() {
   runApp(const AuroraApp());
 }
@@ -636,28 +664,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     String detectedDisease,
     double confidenceScore,
   ) {
-    // Base de données locale temporaire pour adapter le texte selon la maladie détectée
-    Map<String, List<String>> protocolesSante = {
-      "Mosaïque du Manioc": [
-        "Isoler immédiatement et brûler les résidus de plants infectés.",
-        "Sélectionner exclusivement des boutures saines pour le prochain cycle.",
-        "Pratiquer une rotation stricte avec des légumineuses (Niébé) pour régénérer le sol.",
-      ],
-      "Rouille du Maïs": [
-        "Éliminer les feuilles inférieures présentant des pustules orangées.",
-        "Pulvériser une solution de bicarbonate de soude diluée (5g/L) ou décoction de Neem.",
-        "Pratiquer une rotation de culture au prochain cycle.",
-      ],
-    };
-
-    // Récupération du protocole correspondant, ou protocole par défaut
-    List<String> actions =
-        protocolesSante[detectedDisease] ??
-        [
-          "Isoler immédiatement la zone affectée de la parcelle.",
-          "Appliquer un traitement biologique préventif à base d'extraits végétaux locaux.",
-          "Surveiller l'évolution des symptômes sous 48h.",
-        ];
+    List<String> actions = _getProtocolActions(detectedDisease);
 
     showModalBottomSheet(
       context: context,
@@ -691,7 +698,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    // Rendu dynamique du nom de la maladie
                     child: Text(
                       '$detectedDisease détectée',
                       style: const TextStyle(
@@ -703,7 +709,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 ],
               ),
               const SizedBox(height: 6),
-              // Rendu dynamique du score de certitude
               Text(
                 'Indice de certitude locale : ${confidenceScore.toStringAsFixed(0)}%',
                 style: const TextStyle(
@@ -721,7 +726,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Affichage dynamique de la liste des actions requises
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: actions.asMap().entries.map((entry) {
