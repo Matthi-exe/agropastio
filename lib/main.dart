@@ -316,7 +316,7 @@ class MainMenuScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF2E7D32),
-        centerTitle: true,
+        centerTitle: false,
         elevation: 2,
         actions: [
           IconButton(
@@ -516,20 +516,6 @@ class AgricultureHomeScreen extends StatelessWidget {
                   ),
                   _buildMenuCard(
                     context,
-                    icon: Icons.wb_sunny_outlined,
-                    title: 'Météo Prédictive',
-                    subtitle: 'Suivi sans réseau',
-                    color: Colors.blue.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.gpp_bad_outlined,
-                    title: 'Vigilance Épidémie',
-                    subtitle: 'Alertes locales',
-                    color: Colors.red.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
                     icon: Icons.bar_chart_outlined,
                     title: 'Opportunités',
                     subtitle: 'Marché & Demandes',
@@ -592,7 +578,7 @@ class AgricultureHomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(icon, size: 36, color: color),
               const SizedBox(height: 12),
@@ -1365,34 +1351,6 @@ class LivestockHomeScreen extends StatelessWidget {
                     subtitle: 'Analyse des plaies',
                     color: const Color(0xFFE65100),
                     targetScreen: const LiveStockDiagnosticScreen(),
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.vaccines_outlined,
-                    title: 'Santé & Vaccins',
-                    subtitle: 'Suivi des cycles',
-                    color: Colors.teal.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.scale_outlined,
-                    title: 'Estimer Poids',
-                    subtitle: 'Analyse par photo',
-                    color: Colors.indigo.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.water_drop_outlined,
-                    title: 'Pâturages & Eau',
-                    subtitle: 'Ressources locales',
-                    color: Colors.blue.shade800,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.child_care_outlined,
-                    title: 'Reproduction',
-                    subtitle: 'Gestation & Cycles',
-                    color: Colors.pink.shade700,
                   ),
                   _buildMenuCard(
                     context,
