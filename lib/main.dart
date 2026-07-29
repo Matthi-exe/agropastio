@@ -464,23 +464,29 @@ class DiagnosticScreen extends StatefulWidget {
 
 class _DiagnosticScreenState extends State<DiagnosticScreen> {
   File? _imageFile;
+  File? _imageFileVerso;
   final ImagePicker _picker = ImagePicker();
   bool _isAnalyzing = false;
+  String _selectedCrop = 'Mil';
 
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickImage(ImageSource source, {bool isVerso = false}) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path);
+        if (isVerso) {
+          _imageFileVerso = File(pickedFile.path);
+        } else {
+          _imageFile = File(pickedFile.path);
+        }
       });
     }
   }
 
   void _runLocalAnalysis() {
-    if (_imageFile == null) {
+    if (_imageFile == null || _imageFileVerso == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Veuillez d\'abord prendre ou sélectionner une photo.'),
+          content: Text('Veuillez prendre une photo du recto ET du verso.'),
         ),
       );
       return;
@@ -490,7 +496,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
 
     Future.delayed(const Duration(seconds: 2), () {
       setState(() => _isAnalyzing = false);
-      _showResult(context, "Mosaïque du Manioc", 94.0);
+      _showResult(context, _selectedCrop, 94.0);
     });
   }
 
@@ -603,68 +609,38 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedCrop,
+              decoration: const InputDecoration(
+                labelText: 'Culture concernée',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              items: [
+                'Mil',
+                'Maïs',
+                'Sorgho',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setState(() => _selectedCrop = v!),
+            ),
+            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
-                    width: 2,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildPhotoBox(_imageFile, 'Face (recto)', false),
                   ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    _imageFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(22),
-                            child: Image.file(
-                              _imageFile!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
-                          )
-                        : Icon(
-                            Icons.photo_camera_outlined,
-                            size: 72,
-                            color: const Color(
-                              0xFF2E7D32,
-                            ).withValues(alpha: 0.3),
-                          ),
-                    _buildCorners(),
-                    if (_isAnalyzing)
-                      Container(
-                        color: Colors.black45,
-                        child: const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      ),
-                  ],
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildPhotoBox(_imageFileVerso, 'Dos (verso)', true),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.camera_alt),
-                    label: const Text('Appareil Photo'),
-                    onPressed: () => _pickImage(ImageSource.camera),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.photo_library),
-                    label: const Text('Galerie'),
-                    onPressed: () => _pickImage(ImageSource.gallery),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -747,6 +723,68 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhotoBox(File? image, String label, bool isVerso) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+              width: 2,
+            ),
+          ),
+          child: image != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(22),
+                  child: Image.file(
+                    image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                )
+              : Icon(
+                  Icons.photo_camera_outlined,
+                  size: 56,
+                  color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+                ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.camera_alt, size: 18),
+                label: const Text('Photo'),
+                onPressed: () =>
+                    _pickImage(ImageSource.camera, isVerso: isVerso),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.photo_library, size: 18),
+                label: const Text('Galerie'),
+                onPressed: () =>
+                    _pickImage(ImageSource.gallery, isVerso: isVerso),
+              ),
+            ),
+          ],
         ),
       ],
     );
