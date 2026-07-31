@@ -545,18 +545,16 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ),
+                    )
+                  )
                 ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Indice de certitude locale : ${confidenceScore.toStringAsFixed(0)}%',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Text('Indice de certitude locale : ${confidenceScore.toStringAsFixed(0)}%',
+                     style: const TextStyle(
+                      color: Colors.grey,
+                       fontWeight: FontWeight.w500,
+                    ),
+                 ),
               const Divider(height: 24),
               const Text(
                 'PROTOCOLE DE TRAITEMENT BIOLOGIQUE :',
@@ -604,43 +602,73 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Positionnez la feuille malade dans le cadre',
+             'Positionnez la feuille malade dans le cadre',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              initialValue: _selectedCrop,
-              decoration: const InputDecoration(
-                labelText: 'Culture concernée',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              items: [
-                'Mil',
-                'Maïs',
-                'Sorgho',
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (v) => setState(() => _selectedCrop = v!),
-            ),
-            const SizedBox(height: 16),
-            const SizedBox(height: 20),
             Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: _buildPhotoBox(_imageFile, 'Face (recto)', false),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+                    width: 2,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildPhotoBox(_imageFileVerso, 'Dos (verso)', true),
-                  ),
-                ],
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    _imageFile != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(22),
+                            child: Image.file(
+                              _imageFile!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          )
+                        : Icon(
+                            Icons.photo_camera_outlined,
+                            size: 72,
+                            color: const Color(
+                              0xFF2E7D32,
+                            ).withValues(alpha: 0.3),
+                          ),
+                    _buildCorners(),
+                    if (_isAnalyzing)
+                      Container(
+                        color: Colors.black45,
+                        child: const Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Appareil Photo'),
+                    onPressed: () => _pickImage(ImageSource.camera),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('Galerie'),
+                    onPressed: () => _pickImage(ImageSource.gallery),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -727,43 +755,19 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
       ],
     );
   }
+}
 
-  Widget _buildPhotoBox(File? image, String label, bool isVerso) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: 180,
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.04),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
-              width: 2,
-            ),
-          ),
-          child: image != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: Image.file(
-                    image,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                )
-              : Icon(
-                  Icons.photo_camera_outlined,
-                  size: 56,
-                  color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
-                ),
-        ),
+// ==========================================
+// 6. SOUS-MODULE REEL : AUDIT DE PARCELLE
+// ==========================================
+class AuditScreen extends StatefulWidget {
+  const AuditScreen({super.key});
+
+  @override
+  State<AuditScreen> createState() => _AuditScreenState();
+}
+
+class _AuditScreenState extends State<AuditScreen> {
         const SizedBox(height: 8),
         Row(
           children: [
@@ -1630,44 +1634,6 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Icons.shield_outlined, color: Colors.brown),
-            SizedBox(width: 10),
-            Text('Bilan Zootechnique'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Score de résilience : $resilienceScore/100',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: resilienceScore < 60 ? Colors.red : Colors.orange,
-              ),
-            ),
-            const Divider(height: 20),
-            Text('• Statut : $warning', style: const TextStyle(fontSize: 13)),
-            const SizedBox(height: 10),
-            const Text(
-              '• Conseil Aurora : Prévoyez la fabrication locale de blocs nutritionnels (UMNMB) pour soutenir l\'apport azoté.',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.brown,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Fermer',
               style: TextStyle(
                 color: Colors.brown,
                 fontWeight: FontWeight.bold,
