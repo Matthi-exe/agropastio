@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:agropastio/main.dart';
+import 'package:agropastio/screens/registerScreen.dart';
+import 'package:agropastio/screens/mainmenuScreen.dart';
 
 // ==========================================
 // 1. ÉCRAN D'OUVERTURE (LANDING SCREEN)
