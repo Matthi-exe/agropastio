@@ -1,6 +1,35 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:agropastio/screens/landingScreen.dart';
+
+const Map<String, List<String>> _protocolesSante = {
+  "Mosaïque du Manioc": [
+    "Isoler immédiatement et brûler les résidus de plants infectés.",
+    "Sélectionner exclusivement des boutures saines pour le prochain cycle.",
+    "Pratiquer une rotation stricte avec des légumineuses (Niébé) pour régénérer le sol.",
+  ],
+  "Rouille du Maïs": [
+    "Éliminer les feuilles inférieures présentant des pustules orangées.",
+    "Pulvériser une solution de bicarbonate de soude diluée (5g/L) ou décoction de Neem.",
+    "Pratiquer une rotation de culture au prochain cycle.",
+  ],
+  "Saine (Aucune anomalie)": [
+    "Contrôler régulièrement l'état foliaire.",
+    "Maintenir les bonnes pratiques d'irrigation.",
+    "Conserver un couvert végétal protecteur pour le sol.",
+  ],
+};
+
+const List<String> _defaultProtocolActions = [
+  "Isoler immédiatement la zone affectée de la parcelle.",
+  "Appliquer un traitement biologique préventif à base d'extraits végétaux locaux.",
+  "Surveiller l'évolution des symptômes sous 48h.",
+];
+
+List<String> _getProtocolActions(String detectedDisease) {
+  return _protocolesSante[detectedDisease] ?? _defaultProtocolActions;
+}
 
 void main() {
   runApp(const AuroraApp());
@@ -20,158 +49,6 @@ class AuroraApp extends StatelessWidget {
         primaryColor: const Color(0xFF2E7D32),
       ),
       home: const LandingScreen(),
-    );
-  }
-}
-
-// ==========================================
-// 1. ÉCRAN D'OUVERTURE (LANDING SCREEN)
-// ==========================================
-class LandingScreen extends StatelessWidget {
-  const LandingScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-              const Icon(Icons.wb_twilight, size: 68, color: Color(0xFF2E7D32)),
-              const SizedBox(height: 10),
-              const Text(
-                'Aurora',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E7D32),
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Des soins de pointe pour vos cultures et bétails',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                  fontStyle: FontStyle.italic,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const Spacer(),
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: "Identifiant (numéro de téléphone ou email)",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person_outline),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock_outline),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[400],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Mode en ligne indisponible sur ce prototype.',
-                      ),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'SE CONNECTER',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterScreen(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  "Créer un compte (Inscription)",
-                  style: TextStyle(
-                    color: Color(0xFF2E7D32),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              const Row(
-                children: [
-                  Expanded(child: Divider()),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      "OU",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(child: Divider()),
-                ],
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE65100),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: const Icon(Icons.wifi_off, size: 24),
-                label: const Text(
-                  'PASSER EN MODE HORS-LIGNE',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MainMenuScreen(),
-                    ),
-                  );
-                },
-              ),
-              const Spacer(),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -288,7 +165,7 @@ class MainMenuScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF2E7D32),
-        centerTitle: true,
+        centerTitle: false,
         elevation: 2,
         actions: [
           IconButton(
@@ -488,20 +365,6 @@ class AgricultureHomeScreen extends StatelessWidget {
                   ),
                   _buildMenuCard(
                     context,
-                    icon: Icons.wb_sunny_outlined,
-                    title: 'Météo Prédictive',
-                    subtitle: 'Suivi sans réseau',
-                    color: Colors.blue.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.gpp_bad_outlined,
-                    title: 'Vigilance Épidémie',
-                    subtitle: 'Alertes locales',
-                    color: Colors.red.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
                     icon: Icons.bar_chart_outlined,
                     title: 'Opportunités',
                     subtitle: 'Marché & Demandes',
@@ -564,7 +427,7 @@ class AgricultureHomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(icon, size: 36, color: color),
               const SizedBox(height: 12),
@@ -601,23 +464,29 @@ class DiagnosticScreen extends StatefulWidget {
 
 class _DiagnosticScreenState extends State<DiagnosticScreen> {
   File? _imageFile;
+  File? _imageFileVerso;
   final ImagePicker _picker = ImagePicker();
   bool _isAnalyzing = false;
+  String _selectedCrop = 'Mil';
 
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickImage(ImageSource source, {bool isVerso = false}) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path);
+        if (isVerso) {
+          _imageFileVerso = File(pickedFile.path);
+        } else {
+          _imageFile = File(pickedFile.path);
+        }
       });
     }
   }
 
   void _runLocalAnalysis() {
-    if (_imageFile == null) {
+    if (_imageFile == null || _imageFileVerso == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Veuillez d\'abord prendre ou sélectionner une photo.'),
+          content: Text('Veuillez prendre une photo du recto ET du verso.'),
         ),
       );
       return;
@@ -627,7 +496,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
 
     Future.delayed(const Duration(seconds: 2), () {
       setState(() => _isAnalyzing = false);
-      _showResult(context, "Mosaïque du Manioc", 94.0);
+      _showResult(context, _selectedCrop, 94.0);
     });
   }
 
@@ -636,28 +505,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     String detectedDisease,
     double confidenceScore,
   ) {
-    // Base de données locale temporaire pour adapter le texte selon la maladie détectée
-    Map<String, List<String>> protocolesSante = {
-      "Mosaïque du Manioc": [
-        "Isoler immédiatement et brûler les résidus de plants infectés.",
-        "Sélectionner exclusivement des boutures saines pour le prochain cycle.",
-        "Pratiquer une rotation stricte avec des légumineuses (Niébé) pour régénérer le sol.",
-      ],
-      "Rouille du Maïs": [
-        "Éliminer les feuilles inférieures présentant des pustules orangées.",
-        "Pulvériser une solution de bicarbonate de soude diluée (5g/L) ou décoction de Neem.",
-        "Pratiquer une rotation de culture au prochain cycle.",
-      ],
-    };
-
-    // Récupération du protocole correspondant, ou protocole par défaut
-    List<String> actions =
-        protocolesSante[detectedDisease] ??
-        [
-          "Isoler immédiatement la zone affectée de la parcelle.",
-          "Appliquer un traitement biologique préventif à base d'extraits végétaux locaux.",
-          "Surveiller l'évolution des symptômes sous 48h.",
-        ];
+    List<String> actions = _getProtocolActions(detectedDisease);
 
     showModalBottomSheet(
       context: context,
@@ -691,7 +539,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    // Rendu dynamique du nom de la maladie
                     child: Text(
                       '$detectedDisease détectée',
                       style: const TextStyle(
@@ -703,7 +550,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 ],
               ),
               const SizedBox(height: 6),
-              // Rendu dynamique du score de certitude
               Text(
                 'Indice de certitude locale : ${confidenceScore.toStringAsFixed(0)}%',
                 style: const TextStyle(
@@ -721,7 +567,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Affichage dynamique de la liste des actions requises
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: actions.asMap().entries.map((entry) {
@@ -764,68 +609,38 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedCrop,
+              decoration: const InputDecoration(
+                labelText: 'Culture concernée',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              items: [
+                'Mil',
+                'Maïs',
+                'Sorgho',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setState(() => _selectedCrop = v!),
+            ),
+            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
-                    width: 2,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildPhotoBox(_imageFile, 'Face (recto)', false),
                   ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    _imageFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(22),
-                            child: Image.file(
-                              _imageFile!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
-                          )
-                        : Icon(
-                            Icons.photo_camera_outlined,
-                            size: 72,
-                            color: const Color(
-                              0xFF2E7D32,
-                            ).withValues(alpha: 0.3),
-                          ),
-                    _buildCorners(),
-                    if (_isAnalyzing)
-                      Container(
-                        color: Colors.black45,
-                        child: const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      ),
-                  ],
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildPhotoBox(_imageFileVerso, 'Dos (verso)', true),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.camera_alt),
-                    label: const Text('Appareil Photo'),
-                    onPressed: () => _pickImage(ImageSource.camera),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.photo_library),
-                    label: const Text('Galerie'),
-                    onPressed: () => _pickImage(ImageSource.gallery),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -908,6 +723,68 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhotoBox(File? image, String label, bool isVerso) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+              width: 2,
+            ),
+          ),
+          child: image != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(22),
+                  child: Image.file(
+                    image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                )
+              : Icon(
+                  Icons.photo_camera_outlined,
+                  size: 56,
+                  color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+                ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.camera_alt, size: 18),
+                label: const Text('Photo'),
+                onPressed: () =>
+                    _pickImage(ImageSource.camera, isVerso: isVerso),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.photo_library, size: 18),
+                label: const Text('Galerie'),
+                onPressed: () =>
+                    _pickImage(ImageSource.gallery, isVerso: isVerso),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -1361,34 +1238,6 @@ class LivestockHomeScreen extends StatelessWidget {
                     subtitle: 'Analyse des plaies',
                     color: const Color(0xFFE65100),
                     targetScreen: const LiveStockDiagnosticScreen(),
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.vaccines_outlined,
-                    title: 'Santé & Vaccins',
-                    subtitle: 'Suivi des cycles',
-                    color: Colors.teal.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.scale_outlined,
-                    title: 'Estimer Poids',
-                    subtitle: 'Analyse par photo',
-                    color: Colors.indigo.shade700,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.water_drop_outlined,
-                    title: 'Pâturages & Eau',
-                    subtitle: 'Ressources locales',
-                    color: Colors.blue.shade800,
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.child_care_outlined,
-                    title: 'Reproduction',
-                    subtitle: 'Gestation & Cycles',
-                    color: Colors.pink.shade700,
                   ),
                   _buildMenuCard(
                     context,
