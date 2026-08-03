@@ -216,69 +216,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     );
   }
 
-  Widget _buildCorners() {
-    return Stack(
-      children: [
-        Positioned(
-          top: 20,
-          left: 20,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Color(0xFF2E7D32), width: 3),
-                left: BorderSide(color: Color(0xFF2E7D32), width: 3),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          top: 20,
-          right: 20,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Color(0xFF2E7D32), width: 3),
-                right: BorderSide(color: Color(0xFF2E7D32), width: 3),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 20,
-          left: 20,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Color(0xFF2E7D32), width: 3),
-                left: BorderSide(color: Color(0xFF2E7D32), width: 3),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 20,
-          right: 20,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Color(0xFF2E7D32), width: 3),
-                right: BorderSide(color: Color(0xFF2E7D32), width: 3),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPhotoBox(File? image, String label, bool isVerso) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
