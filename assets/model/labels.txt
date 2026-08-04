@@ -1,0 +1,6 @@
+0 Sain
+1 Common Rust(rouille)
+2 Helminthosporiose(NLB)
+3 Tache Grise(GLS)
+4 Necrose Letale(MLN)
+5 Striures(MSV)
