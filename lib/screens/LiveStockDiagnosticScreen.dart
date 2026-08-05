@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:agropastio/l10n/app_localizations.dart';
+
 // ==========================================
 // 8. SOUS-MODULE : DIAGNOSTIC IA BÉTAIL
 // ==========================================
@@ -28,10 +30,11 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
   }
 
   void _runLocalAnalysis() {
+    final loc = AppLocalizations.of(context);
     if (_imageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Veuillez d\'abord prendre ou sélectionner une photo.'),
+        SnackBar(
+          content: Text(loc.get('pickPhotoFirst')),
         ),
       );
       return;
@@ -46,6 +49,7 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
   }
 
   void _showLivestockResult(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -69,37 +73,37 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.check_circle, color: Color(0xFFE65100), size: 28),
-                  SizedBox(width: 10),
+                  const Icon(Icons.check_circle, color: Color(0xFFE65100), size: 28),
+                  const SizedBox(width: 10),
                   Text(
-                    'Dermatose Nodulaire Suspectée',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    loc.get('livestockResultTitle'),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Indice de corrélation locale : 89%',
-                style: TextStyle(
+              Text(
+                loc.get('livestockResultIndex'),
+                style: const TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const Divider(height: 24),
-              const Text(
-                'PROTOCOLE BIOLOGIQUE D\'URGENCE :',
-                style: TextStyle(
+              Text(
+                loc.get('livestockProtocolTitle'),
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                   color: Color(0xFFE65100),
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                '1. Isoler immédiatement le sujet atteint pour stopper les vecteurs ailés.\n2. Désinfecter localement les nodules cutanés avec une solution saline purifiée.\n3. Alerter l\'auxiliaire d\'élevage ou vétérinaire local pour confirmation.',
-                style: TextStyle(fontSize: 13, height: 1.4),
+              Text(
+                loc.get('livestockProtocol'),
+                style: const TextStyle(fontSize: 13, height: 1.4),
               ),
               const SizedBox(height: 20),
             ],
@@ -111,11 +115,13 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Analyse Épidermique',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.get('livestockDiagnosticTitle'),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFFE65100),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -125,10 +131,10 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Cadrez la zone cutanée affectée de l\'animal',
+            Text(
+              loc.get('livestockDiagnosticInstructions'),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -179,7 +185,7 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.camera_alt),
-                    label: const Text('Appareil Photo'),
+                    label: Text(loc.get('photoButton')),
                     onPressed: () => _pickImage(ImageSource.camera),
                   ),
                 ),
@@ -187,7 +193,7 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.photo_library),
-                    label: const Text('Galerie'),
+                    label: Text(loc.get('galleryButton')),
                     onPressed: () => _pickImage(ImageSource.gallery),
                   ),
                 ),
@@ -205,7 +211,9 @@ class _LiveStockDiagnosticScreenState extends State<LiveStockDiagnosticScreen> {
               ),
               icon: const Icon(Icons.bolt),
               label: Text(
-                _isAnalyzing ? 'ANALYSE EN COURS...' : 'ANALYSER LE VIVANT',
+                _isAnalyzing
+                    ? loc.get('analyzing')
+                    : loc.get('livestockAnalyze'),
               ),
               onPressed: _isAnalyzing ? null : _runLocalAnalysis,
             ),

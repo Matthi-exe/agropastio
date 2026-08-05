@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:agropastio/l10n/app_localizations.dart';
+
 // ==========================================
 // 9. SOUS-MODULE REEL : AUDIT DE RÉSILIENCE BÉTAIL
 // ==========================================
@@ -16,11 +18,12 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
   double _distanceEau = 1.0;
 
   void _analyzeLivestockReal() {
+    final loc = AppLocalizations.of(context);
     int? heads = int.tryParse(_headCountController.text);
     if (heads == null || heads <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Veuillez entrer un nombre d\'animaux valide.'),
+        SnackBar(
+          content: Text(loc.get('livestockHeadError')),
         ),
       );
       return;
@@ -44,11 +47,11 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.shield_outlined, color: Colors.brown),
-            SizedBox(width: 10),
-            Text('Bilan Zootechnique'),
+            const Icon(Icons.shield_outlined, color: Colors.brown),
+            const SizedBox(width: 10),
+            Text(loc.get('livestockResultTitleDialog')),
           ],
         ),
         content: Column(
@@ -56,18 +59,21 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Score de résilience : $resilienceScore/100',
+              loc.get('livestockResultScore', params: {'score': resilienceScore.toString()}),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: resilienceScore < 60 ? Colors.red : Colors.orange,
               ),
             ),
             const Divider(height: 20),
-            Text('• Statut : $warning', style: const TextStyle(fontSize: 13)),
+            Text(
+              loc.get('livestockResultStatus', params: {'status': warning}),
+              style: const TextStyle(fontSize: 13),
+            ),
             const SizedBox(height: 10),
-            const Text(
-              '• Conseil Aurora : Prévoyez la fabrication locale de blocs nutritionnels (UMNMB) pour soutenir l\'apport azoté.',
-              style: TextStyle(
+            Text(
+              loc.get('livestockAdvice'),
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.brown,
@@ -78,9 +84,9 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Fermer',
-              style: TextStyle(
+            child: Text(
+              loc.get('closeButton'),
+              style: const TextStyle(
                 color: Colors.brown,
                 fontWeight: FontWeight.bold,
               ),
@@ -93,11 +99,13 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Audit Troupeau',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.get('livestockAuditTitle'),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFFE65100),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -107,18 +115,18 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Évaluation Éco-Pastorale',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.get('livestockAuditHeading'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildSectionTitle('1. Structure du Cheptel'),
+            _buildSectionTitle(loc.get('livestockSection1')),
             TextField(
               controller: _headCountController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Nombre de têtes global',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('livestockHeadCount'),
+                border: const OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -126,18 +134,18 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _regime,
-              decoration: const InputDecoration(
-                labelText: 'Régime d\'exploitation',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('livestockRegimeLabel'),
+                border: const OutlineInputBorder(),
               ),
               items: [
-                'Extensif',
-                'Semi-stabulation',
+                loc.get('livestockRegimeExtensif'),
+                loc.get('livestockRegimeSemi'),
               ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _regime = v!),
             ),
             const SizedBox(height: 20),
-            _buildSectionTitle('2. Accessibilité Hydrique'),
+            _buildSectionTitle(loc.get('livestockSection2')),
             Slider(
               value: _distanceEau,
               min: 0.5,
@@ -151,7 +159,7 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
             ),
             Center(
               child: Text(
-                'Distance moyenne du point d\'eau : $_distanceEau km',
+                loc.get('livestockWaterDist', params: {'distance': _distanceEau.toStringAsFixed(1)}),
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -166,9 +174,9 @@ class _LiveStockAuditScreenState extends State<LiveStockAuditScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: _analyzeLivestockReal,
-              child: const Text(
-                'LANCER L\'ANALYSE REELLE',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                loc.get('livestockAuditButton'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],

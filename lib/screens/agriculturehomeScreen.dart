@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:agropastio/screens/diagnosticScreen.dart';
+
+import 'package:agropastio/l10n/app_localizations.dart';
 import 'package:agropastio/screens/auditScreen.dart';
+import 'package:agropastio/screens/diagnosticScreen.dart';
 import 'package:agropastio/screens/yieldcalculatorScreen.dart';
 
 // ==========================================
@@ -11,11 +13,13 @@ class AgricultureHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Aurora — Agriculture',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          loc.get('agricultureTitle'),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF2E7D32),
         centerTitle: true,
@@ -30,10 +34,10 @@ class AgricultureHomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 8),
-            const Text(
-              '« Éclairer la terre, nourrir l\'avenir. »',
+            Text(
+              loc.get('agricultureSlogan'),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
                 color: Colors.grey,
@@ -48,16 +52,16 @@ class AgricultureHomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF81C784)),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.lightbulb_outline, color: Color(0xFF2E7D32)),
-                  SizedBox(width: 12),
+                  const Icon(Icons.lightbulb_outline, color: Color(0xFF2E7D32)),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Conseil IA local : Conditions idéales validées pour le semis de maïs et sorgho ce matin.',
+                      loc.get('agricultureAdvice'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF1B5E20),
@@ -77,31 +81,31 @@ class AgricultureHomeScreen extends StatelessWidget {
                   _buildMenuCard(
                     context,
                     icon: Icons.center_focus_strong,
-                    title: 'Diagnostic IA',
-                    subtitle: 'Scanner les feuilles',
+                    title: loc.get('moduleDiagnostic'),
+                    subtitle: loc.get('scanInstructions'),
                     color: const Color(0xFF2E7D32),
                     targetScreen: const DiagnosticScreen(),
                   ),
                   _buildMenuCard(
                     context,
                     icon: Icons.bar_chart_outlined,
-                    title: 'Opportunités',
-                    subtitle: 'Marché & Demandes',
+                    title: loc.get('moduleOpportunities'),
+                    subtitle: loc.get('moduleOpportunitySubtitle'),
                     color: Colors.amber.shade900,
                   ),
                   _buildMenuCard(
                     context,
                     icon: Icons.calculate_outlined,
-                    title: 'Calculateur',
-                    subtitle: 'Estimer la récolte',
+                    title: loc.get('moduleCalculator'),
+                    subtitle: loc.get('moduleCalculatorSubtitle'),
                     color: Colors.teal.shade700,
                     targetScreen: const YieldCalculatorScreen(),
                   ),
                   _buildMenuCard(
                     context,
                     icon: Icons.analytics_outlined,
-                    title: 'Audit Parcelle',
-                    subtitle: 'Analyse globale',
+                    title: loc.get('moduleAudit'),
+                    subtitle: loc.get('moduleAuditSubtitle'),
                     color: Colors.purple.shade700,
                     targetScreen: const AuditScreen(),
                   ),

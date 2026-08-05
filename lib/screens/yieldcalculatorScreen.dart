@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:agropastio/l10n/app_localizations.dart';
+
 // ==========================================
 // 6B. MODULE REEL : CALCULATEUR RENDEMENT
 // ==========================================
@@ -33,11 +35,13 @@ class _YieldCalculatorScreenState extends State<YieldCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Calculateur de Rendement',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.get('yieldTitle'),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF2E7D32),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -47,25 +51,25 @@ class _YieldCalculatorScreenState extends State<YieldCalculatorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Estimation Prédictive de Récolte',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              loc.get('yieldHeading'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _areaCalcController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Superficie à exploiter (Hectares)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('yieldAreaLabel'),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _cropType,
-              decoration: const InputDecoration(
-                labelText: 'Variété végétale',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('yieldCropLabel'),
+                border: const OutlineInputBorder(),
               ),
               items: [
                 'Maïs',
@@ -83,9 +87,9 @@ class _YieldCalculatorScreenState extends State<YieldCalculatorScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               onPressed: _computeYield,
-              child: const Text(
-                'CALCULER',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                loc.get('yieldButton'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             if (_hasCalculated) ...[
@@ -96,13 +100,16 @@ class _YieldCalculatorScreenState extends State<YieldCalculatorScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      const Text(
-                        'Volume de Récolte Estimé',
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      Text(
+                        loc.get('yieldVolume'),
+                        style: const TextStyle(fontSize: 14, color: Colors.black54),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${_calculatedYield.toStringAsFixed(2)} Tonnes',
+                        loc.get(
+                          'yieldResult',
+                          params: {'yield': _calculatedYield.toStringAsFixed(2)},
+                        ),
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -111,7 +118,10 @@ class _YieldCalculatorScreenState extends State<YieldCalculatorScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Calcul basé sur la constante nationale pour le $_cropType.',
+                        loc.get(
+                          'yieldBaseLabel',
+                          params: {'crop': _cropType},
+                        ),
                         style: const TextStyle(
                           fontSize: 11,
                           fontStyle: FontStyle.italic,

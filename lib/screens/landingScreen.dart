@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:agropastio/screens/registerScreen.dart';
-import 'package:agropastio/screens/mainmenuScreen.dart';
 
-// ==========================================
-// 1. ÉCRAN D'OUVERTURE (LANDING SCREEN)
-// ==========================================
+import 'package:agropastio/l10n/app_localizations.dart';
+import 'package:agropastio/screens/mainmenuScreen.dart';
+import 'package:agropastio/screens/registerScreen.dart';
+
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final currentLocale = AppLocalizations.currentLocale;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -20,10 +22,10 @@ class LandingScreen extends StatelessWidget {
               const Spacer(),
               const Icon(Icons.wb_twilight, size: 68, color: Color(0xFF2E7D32)),
               const SizedBox(height: 10),
-              const Text(
-                'Aurora',
+              Text(
+                loc.get('appTitle'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF2E7D32),
@@ -31,33 +33,60 @@ class LandingScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Des soins de pointe pour vos cultures et bétails',
+              Text(
+                loc.get('landingSubtitle'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black54,
                   fontStyle: FontStyle.italic,
                   letterSpacing: 0.5,
                 ),
               ),
-              const Spacer(),
-              const TextField(
+              const SizedBox(height: 18),
+              DropdownButtonFormField<Locale>(
+                value: currentLocale,
                 decoration: InputDecoration(
-                  labelText: "Identifiant (numéro de téléphone ou email)",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person_outline),
+                  labelText: loc.get('languageLabel'),
+                  border: const OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                items: AppLocalizations.supportedLocales
+                    .map(
+                      (locale) => DropdownMenuItem<Locale>(
+                        value: locale,
+                        child: Text(
+                          locale.languageCode == 'fr'
+                              ? loc.get('languageFrench')
+                              : loc.get('languageMooré'),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (Locale? locale) {
+                  if (locale != null) {
+                    AppLocalizations.setLocale(locale);
+                  }
+                },
+              ),
+              const Spacer(),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: loc.get('userIdLabel'),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.person_outline),
                   filled: true,
                   fillColor: Colors.white,
                 ),
               ),
               const SizedBox(height: 12),
-              const TextField(
+              TextField(
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock_outline),
+                  labelText: loc.get('passwordLabel'),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock_outline),
                   filled: true,
                   fillColor: Colors.white,
                 ),
@@ -74,16 +103,14 @@ class LandingScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Mode en ligne indisponible sur ce prototype.',
-                      ),
+                    SnackBar(
+                      content: Text(loc.get('connectOffline')),
                     ),
                   );
                 },
-                child: const Text(
-                  'SE CONNECTER',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  loc.get('connectButton'),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               TextButton(
@@ -95,9 +122,9 @@ class LandingScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text(
-                  "Créer un compte (Inscription)",
-                  style: TextStyle(
+                child: Text(
+                  loc.get('createAccount'),
+                  style: const TextStyle(
                     color: Color(0xFF2E7D32),
                     fontWeight: FontWeight.bold,
                   ),
@@ -132,9 +159,9 @@ class LandingScreen extends StatelessWidget {
                   ),
                 ),
                 icon: const Icon(Icons.wifi_off, size: 24),
-                label: const Text(
-                  'PASSER EN MODE HORS-LIGNE',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                label: Text(
+                  loc.get('offlineSwitch'),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   Navigator.pushReplacement(

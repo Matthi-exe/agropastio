@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:agropastio/l10n/app_localizations.dart';
+
 // ==========================================
 // 6. SOUS-MODULE REEL : AUDIT DE PARCELLE
 // ==========================================
@@ -17,13 +19,12 @@ class _AuditScreenState extends State<AuditScreen> {
   String _selectedIrrigation = 'Pluviale';
 
   void _calculateRealAudit() {
+    final loc = AppLocalizations.of(context);
     double? area = double.tryParse(_areaController.text);
     if (area == null || area <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Veuillez entrer une superficie valide supérieure à 0.',
-          ),
+        SnackBar(
+          content: Text(loc.get('auditInputError')),
         ),
       );
       return;
@@ -62,7 +63,7 @@ class _AuditScreenState extends State<AuditScreen> {
               color: score > 70 ? Colors.green : Colors.orange,
             ),
             const SizedBox(width: 10),
-            const Text('Bilan Agro-Écologique'),
+            Text(loc.get('auditResultTitle')),
           ],
         ),
         content: Column(
@@ -70,7 +71,7 @@ class _AuditScreenState extends State<AuditScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Indice de robustesse : $score/100',
+              loc.get('auditRobustness', params: {'score': score.toString()}),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -79,9 +80,7 @@ class _AuditScreenState extends State<AuditScreen> {
             ),
             const Divider(height: 20),
             if (alerts.isEmpty)
-              const Text(
-                '• Vos choix techniques sont optimaux pour cette parcelle. Continuez ainsi !',
-              )
+              Text(loc.get('auditOptimal'))
             else
               Column(
                 children: alerts
@@ -94,9 +93,9 @@ class _AuditScreenState extends State<AuditScreen> {
                     .toList(),
               ),
             const SizedBox(height: 10),
-            const Text(
-              '• Conseil Intelligent : Intégrez un paillage ou une rotation avec le Niébé pour restructurer la couche arable.',
-              style: TextStyle(
+            Text(
+              loc.get('auditAdvice'),
+              style: const TextStyle(
                 fontSize: 13,
                 color: Colors.blueGrey,
                 fontWeight: FontWeight.bold,
@@ -107,9 +106,9 @@ class _AuditScreenState extends State<AuditScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Fermer',
-              style: TextStyle(
+            child: Text(
+              loc.get('closeButton'),
+              style: const TextStyle(
                 color: Color(0xFF2E7D32),
                 fontWeight: FontWeight.bold,
               ),
@@ -122,11 +121,13 @@ class _AuditScreenState extends State<AuditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Audit Éco-Intelligent',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.get('agriAuditTitle'),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF2E7D32),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -136,18 +137,18 @@ class _AuditScreenState extends State<AuditScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Évaluation de la Parcelle',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.get('agriAuditHeading'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildSectionTitle('1. Données Géométriques & Sol'),
+            _buildSectionTitle(loc.get('agriSection1')),
             TextField(
               controller: _areaController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Superficie (en Hectares)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('auditAreaLabel'),
+                border: const OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -155,26 +156,26 @@ class _AuditScreenState extends State<AuditScreen> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _selectedSol,
-              decoration: const InputDecoration(
-                labelText: 'Type de sol',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('auditSoilLabel'),
+                border: const OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
               items: [
-                'Sableux',
-                'Argileux',
-                'Limoneux',
+                loc.get('soilSableux'),
+                loc.get('soilArgileux'),
+                loc.get('soilLimoneux'),
               ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _selectedSol = v!),
             ),
             const SizedBox(height: 20),
-            _buildSectionTitle('2. Spécification des Cultures'),
+            _buildSectionTitle(loc.get('agriSection2')),
             DropdownButtonFormField<String>(
               initialValue: _selectedCrop,
-              decoration: const InputDecoration(
-                labelText: 'Espèce cultivée',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('auditCropLabel'),
+                border: const OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -187,19 +188,19 @@ class _AuditScreenState extends State<AuditScreen> {
               onChanged: (v) => setState(() => _selectedCrop = v!),
             ),
             const SizedBox(height: 20),
-            _buildSectionTitle('3. Pratiques d\'Irrigation'),
+            _buildSectionTitle(loc.get('agriSection3')),
             DropdownButtonFormField<String>(
               initialValue: _selectedIrrigation,
-              decoration: const InputDecoration(
-                labelText: 'Méthode d\'irrigation',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.get('auditIrrigationLabel'),
+                border: const OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
               items: [
-                'Pluviale',
-                'Goutte-à-goutte',
-                'Puits',
+                loc.get('irrigationPluviale'),
+                loc.get('irrigationGoutte'),
+                loc.get('irrigationPuits'),
               ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _selectedIrrigation = v!),
             ),
@@ -214,9 +215,9 @@ class _AuditScreenState extends State<AuditScreen> {
                 ),
               ),
               onPressed: _calculateRealAudit,
-              child: const Text(
-                'GÉNÉRER L\'AUDIT REEL',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                loc.get('auditButton'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
